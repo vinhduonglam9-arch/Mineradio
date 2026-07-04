@@ -2649,7 +2649,7 @@ html.control-glass-svg-ok #visual-guide-btn:hover{
     <h2>选择城市</h2>
     <div class="desc" style="margin-top:-8px;">定位不准时可以手动输入，将为你推荐适合该天气的音乐</div>
     <div class="collect-create" style="margin-top:24px; justify-content:center;">
-      <input id="weather-city-input" type="text" placeholder="输入城市名（如：上海）" autocomplete="off" maxlength="20">
+      <input id="weather-city-input" type="text" placeholder="输入城市名（如：深圳）" autocomplete="off" maxlength="20">
       <button class="modal-btn primary" onclick="submitWeatherCity()">确定</button>
     </div>
     <div class="btn-row" style="margin-top:14px;">
@@ -2879,7 +2879,7 @@ var homeVisualPresetActive = false;
 var homeVisualPrevPreset = 0;
 var HOME_LISTEN_STATS_KEY = 'mineradio-listen-stats-v1';
 var HOME_WEATHER_CITY_KEY = 'mineradio-weather-city';
-var homeWeatherRadioState = { loading: false, loaded: false, city: localStorage.getItem(HOME_WEATHER_CITY_KEY) || '上海', weather: null, radio: null, error: '', updatedAt: 0 };
+var homeWeatherRadioState = { loading: false, loaded: false, city: localStorage.getItem(HOME_WEATHER_CITY_KEY) || '深圳', weather: null, radio: null, error: '', updatedAt: 0 };
 var homeWeatherToken = 0;
 var homeWeatherLoadTimer = null;
 var homeWeatherLoadPromise = null;
@@ -15671,7 +15671,7 @@ function renderHomeDiscover() {
   var loggedOutHome = !homeDiscoverState.loggedIn && !hasAnyPlatformLogin();
   var weather = homeWeatherRadioState.weather;
   var radio = homeWeatherRadioState.radio;
-  var weatherLocation = weather && weather.location && weather.location.name || homeWeatherRadioState.city || '上海';
+  var weatherLocation = weather && weather.location && weather.location.name || homeWeatherRadioState.city || '深圳';
   var weatherTitle = document.getElementById('home-weather-title');
   var weatherKicker = document.getElementById('home-weather-kicker');
   var weatherMeta = document.getElementById('home-weather-meta');
@@ -15783,7 +15783,7 @@ function homeWeatherRadioUrl(opts) {
     params.push('lon=' + encodeURIComponent(opts.lon));
     params.push('city=' + encodeURIComponent(opts.city || '当前位置'));
   } else {
-    params.push('city=' + encodeURIComponent(opts.city || homeWeatherRadioState.city || '上海'));
+    params.push('city=' + encodeURIComponent(opts.city || homeWeatherRadioState.city || '深圳'));
   }
   params.push('timezone=' + encodeURIComponent(opts.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'auto'));
   params.push('t=' + Date.now());
@@ -15906,7 +15906,7 @@ if (emptyHomeStartEl) {
   }, true);
 }
 function locateWeatherRadio() {
-  var previousWeatherCity = homeWeatherRadioState.city || '上海';
+  var previousWeatherCity = homeWeatherRadioState.city || '深圳';
   homeWeatherToken++;
   homeWeatherRadioState.loading = true;
   homeWeatherRadioState.loaded = false;
@@ -15951,7 +15951,7 @@ function locateWeatherRadio() {
 function changeWeatherCity() {
   var input = document.getElementById('weather-city-input');
   if (input) {
-    input.value = homeWeatherRadioState.city && homeWeatherRadioState.city !== '定位中' ? homeWeatherRadioState.city : '上海';
+    input.value = homeWeatherRadioState.city && homeWeatherRadioState.city !== '定位中' ? homeWeatherRadioState.city : '深圳';
   }
   openGsapModal(document.getElementById('weather-city-modal'));
   setTimeout(function(){ if (input) input.focus(); }, 120);
