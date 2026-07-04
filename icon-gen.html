@@ -5,21 +5,43 @@
         <script>
           const ctx = document.getElementById('c').getContext('2d');
           
-          ctx.clearRect(0, 0, 256, 256);
+          // Background black rounded square
+          ctx.fillStyle = '#000000';
+          ctx.beginPath();
+          if (typeof ctx.roundRect === 'function') {
+            ctx.roundRect(0, 0, 256, 256, 48);
+          } else {
+            ctx.rect(0, 0, 256, 256);
+          }
+          ctx.fill();
           
           const gradient = ctx.createLinearGradient(0, 0, 256, 256);
           gradient.addColorStop(0, '#ff0000');
-          gradient.addColorStop(0.2, '#ff7f00');
-          gradient.addColorStop(0.4, '#ffff00');
-          gradient.addColorStop(0.6, '#00ff00');
-          gradient.addColorStop(0.8, '#0000ff');
+          gradient.addColorStop(1/11, '#ff4500');
+          gradient.addColorStop(2/11, '#ff7f00');
+          gradient.addColorStop(3/11, '#ffb300');
+          gradient.addColorStop(4/11, '#ffff00');
+          gradient.addColorStop(5/11, '#9acd32');
+          gradient.addColorStop(6/11, '#00ff00');
+          gradient.addColorStop(7/11, '#00fa9a');
+          gradient.addColorStop(8/11, '#00ffff');
+          gradient.addColorStop(9/11, '#0000ff');
+          gradient.addColorStop(10/11, '#4b0082');
           gradient.addColorStop(1, '#8f00ff');
           
           ctx.fillStyle = gradient;
-          ctx.font = '900 160px system-ui, -apple-system, sans-serif';
+          ctx.font = 'italic 900 150px "Georgia", "Times New Roman", serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText('LI', 128, 140);
+          
+          // Artistic glow
+          ctx.shadowColor = 'rgba(255,255,255,0.4)';
+          ctx.shadowBlur = 12;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          // Draw text
+          ctx.fillText('LI', 128, 138);
           
           const { ipcRenderer } = require('electron');
           const dataURL = document.getElementById('c').toDataURL('image/png');
