@@ -1963,6 +1963,17 @@ async function fetchOpenMeteoWeather(params) {
   u.searchParams.set('timezone', location.timezone || 'auto');
   const body = await requestJson(u.toString(), { headers: { 'User-Agent': UA } });
   const cur = body && body.current || {};
+  const hourly = body && body.hourly || {};
+  let pop = 0;
+  if (hourly.time && hourly.precipitation_probability && cur.time) {
+    const idx = hourly.time.indexOf(cur.time);
+    if (idx !== -1) {
+      pop = hourly.precipitation_probability[idx] || 0;
+    } else {
+      pop = hourly.precipitation_probability[0] || 0;
+    }
+  }
+
   const weather = {
     provider: 'open-meteo',
     location: {
@@ -1980,6 +1991,7 @@ async function fetchOpenMeteoWeather(params) {
     apparentTemperature: Number(cur.apparent_temperature),
     humidity: Number(cur.relative_humidity_2m),
     precipitation: Number(cur.precipitation || cur.rain || cur.showers || cur.snowfall || 0),
+    precipitationProbability: Number(pop),
     cloudCover: Number(cur.cloud_cover),
     windSpeed: Number(cur.wind_speed_10m),
     windGusts: Number(cur.wind_gusts_10m),
