@@ -1,7 +1,14 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 contextBridge.exposeInMainWorld('desktopWindow', {
   isDesktop: true,
+  getFilePath: (file) => {
+    try {
+      return webUtils ? webUtils.getPathForFile(file) : file.path;
+    } catch (e) {
+      return file.path;
+    }
+  },
   minimize: () => ipcRenderer.invoke('desktop-window-minimize'),
   toggleMaximize: () => ipcRenderer.invoke('desktop-window-toggle-maximize'),
   toggleFullscreen: () => ipcRenderer.invoke('desktop-window-toggle-fullscreen'),

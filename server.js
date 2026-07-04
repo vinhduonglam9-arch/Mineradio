@@ -48,6 +48,9 @@ const http = require('http');
 const https = require('https');
 const fs   = require('fs');
 const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+ffmpeg.setFfmpegPath(ffmpegPath);
 const crypto = require('crypto');
 const tls = require('tls');
 const { once } = require('events');
@@ -78,10 +81,10 @@ const OPEN_METEO_FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 const OPEN_METEO_GEOCODE_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const WEATHER_IP_LOCATION_URL = 'http://ip-api.com/json/';
 const WEATHER_DEFAULT_LOCATION = {
-  name: '上海',
+  name: '深圳市',
   country: 'China',
-  latitude: 31.2304,
-  longitude: 121.4737,
+  latitude: 22.5431,
+  longitude: 114.0579,
   timezone: 'Asia/Shanghai',
 };
 
@@ -3243,6 +3246,59 @@ async function getLoginInfo() {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost:' + PORT);
   const pn = url.pathname;
+
+  if (pn === '/api/stream-local-media') {
+    try {
+      const mediaPath = url.searchParams.get('path');
+      if (!mediaPath || !fs.existsSync(mediaPath)) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('File not found');
+        return;
+      }
+      
+      const isAudio = /\.(ape|alac|wma)$/i.test(mediaPath);
+      
+      res.writeHead(200, {
+        'Content-Type': isAudio ? 'audio/webm' : 'video/webm',
+        'Transfer-Encoding': 'chunked'
+      });
+      
+      const command = ffmpeg(mediaPath)
+        .format('webm');
+        
+      if (isAudio) {
+        command.audioCodec('libopus').audioBitrate('256k');
+      } else {
+        command
+          .videoCodec('libvpx-vp9')
+          .audioCodec('libopus')
+          .outputOptions([
+            '-deadline realtime',
+            '-cpu-used 4',
+            '-threads 4',
+            '-vbr on'
+          ]);
+      }
+      
+      command
+        .on('error', (err) => {
+          if (err.message !== 'Output stream closed') {
+            console.error('[FFmpeg Error]', err.message);
+          }
+        })
+        .pipe(res, { end: true });
+        
+      req.on('close', () => {
+        command.kill('SIGKILL');
+      });
+      return;
+    } catch (err) {
+      console.error(err);
+      res.writeHead(500);
+      res.end('Server Error');
+      return;
+    }
+  }
 
   if (pn === '/api/app/version') {
     sendJSON(res, {

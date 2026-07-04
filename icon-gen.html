@@ -1,0 +1,30 @@
+
+    <html>
+      <body style="margin:0;padding:0;overflow:hidden;background:transparent;">
+        <canvas id="c" width="256" height="256"></canvas>
+        <script>
+          const ctx = document.getElementById('c').getContext('2d');
+          
+          ctx.clearRect(0, 0, 256, 256);
+          
+          const gradient = ctx.createLinearGradient(0, 0, 256, 256);
+          gradient.addColorStop(0, '#ff0000');
+          gradient.addColorStop(0.2, '#ff7f00');
+          gradient.addColorStop(0.4, '#ffff00');
+          gradient.addColorStop(0.6, '#00ff00');
+          gradient.addColorStop(0.8, '#0000ff');
+          gradient.addColorStop(1, '#8f00ff');
+          
+          ctx.fillStyle = gradient;
+          ctx.font = '900 160px system-ui, -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('LI', 128, 140);
+          
+          const { ipcRenderer } = require('electron');
+          const dataURL = document.getElementById('c').toDataURL('image/png');
+          ipcRenderer.send('save-icon', dataURL);
+        </script>
+      </body>
+    </html>
+  

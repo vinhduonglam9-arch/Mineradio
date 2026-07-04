@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.2
+- 修复今日天气模块中城市无法选择或输入无效的问题，改用全新内置输入模态框，操作更加顺滑一致。
+- 增加本地音视频独立播放窗口：位于主页“今日天气”模块正下方，支持点击选择或直接拖拽本地高清视频（MP4/WebM/MKV）和无损音频（FLAC/WAV/MP3），视频在主页窗口独立播放，音频自动无缝送入主播放器进行带有视觉特效和歌词的深度渲染。
+- 集成 PotPlayer 级多格式解码能力：扩展支持 MKV、AVI、RMVB、FLV、WMV、TS、APE、ALAC、WMA 等海量音视频格式；借助内部服务端实时转码推流，解决 Chromium 原生不支持特定编码格式的问题。
+
 ## v1.1.1
 
 - P0 installer safety fix: installation now defaults to the first available non-C drive from `D:\Mineradio` through `Z:\Mineradio`; it falls back to `C:\Mineradio` only when no D-Z drive exists.

@@ -41,7 +41,8 @@ body.desktop-shell.desktop-maximized #desktop-window-shell,body.desktop-shell.de
 body.desktop-shell #desktop-titlebar{position:fixed;z-index:500;top:0;left:0;right:0;height:44px;padding:0 12px 0 18px;display:flex;align-items:center;justify-content:space-between;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;-webkit-app-region:drag;pointer-events:none}
 body.desktop-shell #desktop-titlebar::after{content:none}
 .desktop-drag-region{height:100%;flex:1;display:flex;align-items:center;gap:9px;min-width:0;color:rgba(224,250,255,.74);font-size:12px;font-weight:600;letter-spacing:0;text-transform:uppercase;-webkit-app-region:drag;pointer-events:auto}
-.desktop-app-mark{display:none}
+.desktop-app-mark{display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;background:linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);-webkit-background-clip:text;color:transparent;margin-right:8px;font-family:system-ui,-apple-system,sans-serif;letter-spacing:1px}
+.desktop-app-mark::before{content:"LI"}
 .desktop-app-title{display:none}
 .desktop-window-controls{display:flex;align-items:center;gap:6px;padding:0;border-radius:0;background:transparent;box-shadow:none;-webkit-app-region:no-drag;pointer-events:auto}
 .desktop-window-btn{width:38px;height:30px;border:0;border-radius:10px;background:rgba(4,8,10,.42);color:rgba(224,250,255,.72);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .18s,transform .18s}
@@ -98,6 +99,20 @@ body.custom-background-override #album-bg{opacity:0!important}
 #canvas-container canvas{display:block;width:100%!important;height:100%!important}
 #canvas-container:focus,#canvas-container:focus-visible,#canvas-container canvas:focus,#canvas-container canvas:focus-visible,html:focus,html:focus-visible,body:focus,body:focus-visible{outline:none!important;box-shadow:none!important}
 #canvas-container canvas{outline:none!important;border:0!important}
+#main-stage-video-container{position:fixed;inset:0;z-index:15;background:#000;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(.16,1,.3,1)}
+#main-stage-video-container video{width:100%;height:100%;object-fit:contain;outline:none;display:block}
+#main-stage-video-close{position:absolute;top:48px;left:24px;z-index:20;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.8);cursor:pointer;opacity:0;transform:translateY(-10px);transition:opacity 0.4s, transform 0.4s, background 0.2s, box-shadow 0.2s}
+body.video-playing-mode #main-stage-video-container{opacity:1;pointer-events:auto}
+body.video-playing-mode #main-stage-video-close{opacity:1;transform:translateY(0)}
+body.video-playing-mode #empty-home{opacity:0!important;pointer-events:none!important}
+body.video-playing-mode #canvas-container{opacity:0!important;visibility:hidden!important}
+body.video-playing-mode #album-bg{opacity:0!important}
+body.video-playing-mode #custom-bg::after{opacity:0!important}
+body.video-playing-mode #desktop-titlebar{transition:opacity 0.4s}
+body.video-playing-mode.video-idle #desktop-titlebar,
+body.video-playing-mode.video-idle #control-panel,
+body.video-playing-mode.video-idle #main-stage-video-close{opacity:0!important;pointer-events:none!important}
+body.video-playing-mode.video-idle{cursor:none!important}
 body.render-deep-sleep #canvas-container,body.render-deep-sleep #idle-guide-canvas,body.render-deep-sleep #splash-canvas,body.render-deep-sleep #hand-canvas{opacity:0!important;visibility:hidden!important}
 body.splash-active:not(.splash-revealing) #canvas-container{opacity:.16;transform:scale(1)}
 body.splash-active.splash-revealing #canvas-container{opacity:1;transform:scale(1)}
@@ -327,6 +342,49 @@ body.empty-home-active .home-visual{animation:home-visual-drift 8.8s ease-in-out
 @media (max-height:700px){#empty-home{top:126px;bottom:34px}.home-hero{padding:20px}.home-title{font-size:clamp(28px,3.55vw,42px)}.home-sub{font-size:12px;line-height:1.42}.home-weather-meta{margin-top:12px}.home-quick-row{margin-top:12px}.home-visual{height:174px;max-width:216px}.home-mosaic{height:112px;min-height:104px}.home-card{min-height:112px;padding:12px}.home-card-title{font-size:15.5px}.home-card-sub{font-size:10.5px;line-height:1.28;-webkit-line-clamp:2}.home-card-art{width:70px;height:70px;border-radius:16px}.home-card::after{right:78px;height:48px}.home-tile{min-height:112px;padding:9px}.home-tile-cover{height:54px;margin-bottom:8px}.home-section-head{min-height:30px}}
 @media (max-width:840px){.empty-home-shell{grid-template-columns:minmax(250px,.86fr) minmax(360px,1.14fr)}.home-hero-inner{grid-template-columns:minmax(0,1fr)}.home-visual{display:none}.home-mosaic{height:124px;min-height:108px}.home-card{min-height:108px}.home-card-title{font-size:15px;max-width:68%}.home-card-sub{font-size:10.3px;max-width:62%}.home-card-art{width:66px;height:66px;border-radius:15px}.home-card::after{right:72px;width:24px;height:44px}.home-tile-title{font-size:11.5px}}
 @media (max-width:760px){#empty-home{top:150px;bottom:56px;width:calc(100vw - 40px)}.empty-home-shell{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;overflow:auto;padding-bottom:4px}.home-hero{grid-row:auto;min-height:344px}.home-mosaic{height:172px;min-height:150px}.home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-tile-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.home-local-media-box {
+  background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(0,0,0,.3));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 22px;
+  padding: 20px;
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 12px;
+  transition: all .2s;
+  min-height: 120px;
+  box-shadow: 0 20px 64px rgba(0,0,0,.28);
+}
+.home-local-media-box.drag-over {
+  border-color: rgba(0, 245, 212, 0.6);
+  background: rgba(0, 245, 212, 0.05);
+}
+.home-local-media-ui {
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.8;
+  transition: opacity .2s;
+}
+.home-local-media-ui:hover {
+  opacity: 1;
+}
+#home-local-video {
+  width: 100%;
+  max-height: 360px;
+  border-radius: 12px;
+  background: #000;
+  display: none;
+  outline: none;
+  margin-top: 12px;
+}
 body.empty-home-active.controls-visible #empty-home{bottom:128px}
 @media (max-height:760px){body.empty-home-active.controls-visible #empty-home{bottom:112px}}
 @media (max-width:620px){#empty-home{top:146px;bottom:44px;width:calc(100vw - 24px)}.home-hero{padding:20px;border-radius:22px}.home-hero-inner{display:flex;flex-direction:column}.home-visual{display:none}.home-mosaic{display:none}.home-grid{grid-template-columns:1fr}.home-tile-row{grid-template-columns:repeat(2,minmax(0,1fr))}.home-tile-cover{height:auto;aspect-ratio:1}.home-tile-sub{display:block}.home-card-art{width:88px;height:88px}.home-card-title,.home-card-sub{max-width:68%}}
@@ -1878,6 +1936,13 @@ html.control-glass-svg-ok #visual-guide-btn:hover{
 <div id="custom-bg"><video id="custom-bg-video" muted loop playsinline preload="metadata"></video></div>
 <div id="album-bg"></div>
 <div id="canvas-container"></div>
+<!-- 视频主舞台 -->
+<div id="main-stage-video-container">
+  <video id="main-stage-video" playsinline></video>
+  <button id="main-stage-video-close" onclick="exitVideoMode()" title="退出视频" class="glass-saved-button">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </button>
+</div>
 <canvas id="idle-guide-canvas" aria-hidden="true"></canvas>
 
 <!-- 启动页 -->
@@ -1931,10 +1996,41 @@ html.control-glass-svg-ok #visual-guide-btn:hover{
 <section id="empty-home" aria-label="Mineradio home">
   <div class="empty-home-shell">
     <div class="home-hero">
-      <div class="home-hero-inner home-construction-inner">
-        <div class="home-title home-construction-title">🚧此处施工，敬请期待🚧</div>
-        <button class="home-chip home-console-chip" type="button" onclick="openHomePlayerConsole()">展开播放器控制台</button>
+      <div class="home-hero-inner" id="home-weather-hero">
+        <div style="grid-column: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+          <div class="home-title" id="home-weather-title">天气电台</div>
+          <div class="home-sub" id="home-weather-kicker" style="margin-top: 8px;">获取天气中，准备为你推荐音乐</div>
+          <div class="home-weather-meta" id="home-weather-meta">
+            <span class="home-weather-pill" id="home-weather-temp">--°C</span>
+            <span class="home-weather-pill" id="home-weather-label">定位中...</span>
+            <button class="home-weather-pill" style="cursor:pointer;" onclick="changeWeatherCity()" title="点击切换城市"><span id="home-weather-city">未知</span> &nbsp;✎</button>
+          </div>
+          <div class="home-quick-row">
+            <button class="home-chip" type="button" onclick="startWeatherRadio()" id="home-weather-play-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 播放天气电台
+            </button>
+            <button class="home-chip home-console-chip" type="button" onclick="openHomePlayerConsole()">展开播放器控制台</button>
+          </div>
+        </div>
+        <div class="home-visual" id="home-weather-visual" style="grid-column: 2; align-self: center; justify-self: center; display: flex; align-items: center; justify-content: center;">
+          <svg width="120" height="120" viewBox="0 0 100 100" fill="none">
+             <circle cx="50" cy="50" r="30" fill="currentColor" opacity="0.15"/>
+             <path d="M50 20 a 30 30 0 0 1 0 60 a 30 30 0 0 1 0 -60" stroke="currentColor" stroke-width="3" opacity="0.8"/>
+             <circle cx="50" cy="50" r="15" fill="currentColor" opacity="0.6"/>
+          </svg>
+        </div>
       </div>
+    </div>
+
+    <!-- 本地音视频播放窗口 -->
+    <div class="home-local-media-box" id="home-local-media-box" ondragover="handleLocalMediaDrag(event)" ondragleave="handleLocalMediaDragLeave(event)" ondrop="handleLocalMediaDrop(event)">
+      <button class="home-local-media-ui" id="home-local-media-ui" onclick="document.getElementById('home-local-media-input').click()" style="background: transparent; border: none; padding: 0;">
+        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: rgba(255,255,255,0.4);"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="12" cy="10" r="3"/><path d="m15.5 13.5 1.5 1.5"/></svg>
+        <div style="font-size:14px; font-weight: 500; color: rgba(255,255,255,0.9);">本地音视频播放</div>
+        <div style="font-size:11px; color: rgba(255,255,255,0.45); margin-top: 2px;">点击或拖拽文件到此处，支持高画质视频及无损音频</div>
+      </button>
+      <input type="file" id="home-local-media-input" accept="audio/*,video/*" style="display:none" onchange="handleLocalMediaSelect(this)">
+
     </div>
 
     <div class="home-grid">
@@ -2454,7 +2550,7 @@ html.control-glass-svg-ok #visual-guide-btn:hover{
   </div>
 </div>
 
-<input type="file" id="file-input" accept=".mp3,.flac,.wav,.ogg,.m4a,.jpg,.jpeg,.png,.webp" multiple style="display:none">
+<input type="file" id="file-input" accept=".mp3,.flac,.wav,.ogg,.m4a,.ape,.alac,.wma,.aac,.mp4,.webm,.mkv,.mov,.avi,.rmvb,.flv,.wmv,.ts,.m2ts,.vob,.3gp,.swf,.jpg,.jpeg,.png,.webp" multiple style="display:none">
 <input type="file" id="background-image-input" accept=".jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" style="display:none">
 <div id="drop-overlay"><div class="drop-text">拖放音乐或封面</div></div>
 <div id="free-camera-hint"><b>自由镜头</b> R 固定/退出 · WASD 移动 · 鼠标转向 · Shift 加速 · Space/Ctrl 升降 · Q/E 轻微旋转 · 滚轮景深 · K 回正</div>
@@ -2542,6 +2638,21 @@ html.control-glass-svg-ok #visual-guide-btn:hover{
     <div class="btn-row">
       <button class="modal-btn" onclick="closeCoverCropModal()">取消</button>
       <button class="modal-btn primary" onclick="commitCoverCrop()">使用封面</button>
+    </div>
+  </div>
+</div>
+
+<!-- 天气城市选择模态 -->
+<div id="weather-city-modal" class="modal-mask">
+  <div class="modal collect-modal">
+    <h2>选择城市</h2>
+    <div class="desc" style="margin-top:-8px;">定位不准时可以手动输入，将为你推荐适合该天气的音乐</div>
+    <div class="collect-create" style="margin-top:24px; justify-content:center;">
+      <input id="weather-city-input" type="text" placeholder="输入城市名（如：上海）" autocomplete="off" maxlength="20">
+      <button class="modal-btn primary" onclick="submitWeatherCity()">确定</button>
+    </div>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="modal-btn" onclick="closeWeatherCityModal()">取消</button>
     </div>
   </div>
 </div>
@@ -15563,8 +15674,8 @@ function renderHomeDiscover() {
   var weatherTitle = document.getElementById('home-weather-title');
   var weatherKicker = document.getElementById('home-weather-kicker');
   var weatherMeta = document.getElementById('home-weather-meta');
-  if (weatherTitle) weatherTitle.textContent = '我的音乐库';
-  if (weatherKicker) weatherKicker.textContent = 'Mineradio · Your Library';
+  if (weatherTitle) weatherTitle.textContent = weather ? '今日天气' : '天气电台';
+  if (weatherKicker) weatherKicker.textContent = weather ? (weather.mood && weather.mood.tagline || '为你推荐适合当下氛围的音乐') : '获取天气中...';
   if (sub) {
     if (loggedOutHome) sub.textContent = '登录后会把你的歌单、常听歌手和最近播放放在这里；也可以直接搜索或导入本地音乐。';
     else sub.textContent = '从你的歌单、最近播放和常听歌手开始，天气电台放在需要氛围的时候再开。';
@@ -15572,15 +15683,14 @@ function renderHomeDiscover() {
   if (weatherMeta) {
     var meta = [];
     if (weather) {
-      meta.push(weatherLocation);
-      meta.push(weather.label + ' · ' + Math.round(weather.temperature || 0) + '°');
-      meta.push('体感 ' + Math.round(weather.apparentTemperature || weather.temperature || 0) + '°');
-      if (isFinite(weather.humidity)) meta.push('湿度 ' + Math.round(weather.humidity) + '%');
+      meta.push('<span class="home-weather-pill" id="home-weather-temp">' + Math.round(weather.temperature || 0) + '°C</span>');
+      meta.push('<span class="home-weather-pill" id="home-weather-label">' + escHtml(weather.label) + '</span>');
+      meta.push('<button class="home-weather-pill" style="cursor:pointer;" onclick="changeWeatherCity()" title="点击切换城市"><span id="home-weather-city">' + escHtml(weatherLocation) + '</span> &nbsp;✎</button>');
     } else {
-      meta.push(weatherLocation);
-      meta.push(homeWeatherRadioState.error ? '天气暂不可用' : '正在整理天气');
+      meta.push('<span class="home-weather-pill" id="home-weather-label">' + (homeWeatherRadioState.error ? '天气暂不可用' : '定位中...') + '</span>');
+      meta.push('<button class="home-weather-pill" style="cursor:pointer;" onclick="changeWeatherCity()" title="点击切换城市"><span id="home-weather-city">' + escHtml(weatherLocation) + '</span> &nbsp;✎</button>');
     }
-    weatherMeta.innerHTML = meta.map(function(text){ return '<span class="home-weather-pill">' + escHtml(text) + '</span>'; }).join('');
+    weatherMeta.innerHTML = meta.join('');
   }
   var daily = homeDiscoverState.songs[0] || null;
   var cardSongB = homeDiscoverState.songs[1] || null;
@@ -15838,9 +15948,26 @@ function locateWeatherRadio() {
   useIpFallback();
 }
 function changeWeatherCity() {
-  var city = window.prompt('输入城市名', homeWeatherRadioState.city || '上海');
-  city = String(city || '').trim();
-  if (!city) return;
+  var input = document.getElementById('weather-city-input');
+  if (input) {
+    input.value = homeWeatherRadioState.city && homeWeatherRadioState.city !== '定位中' ? homeWeatherRadioState.city : '上海';
+  }
+  openGsapModal(document.getElementById('weather-city-modal'));
+  setTimeout(function(){ if (input) input.focus(); }, 120);
+}
+
+function closeWeatherCityModal() {
+  closeGsapModal(document.getElementById('weather-city-modal'));
+}
+
+function submitWeatherCity() {
+  var input = document.getElementById('weather-city-input');
+  var city = String(input ? input.value : '').trim();
+  if (!city) {
+    showToast('请输入城市名称');
+    return;
+  }
+  closeWeatherCityModal();
   homeWeatherRadioState.city = city;
   localStorage.setItem(HOME_WEATHER_CITY_KEY, city);
   homeWeatherRadioState.loaded = false;
@@ -19287,6 +19414,9 @@ function applyPlaylistPanelPinState(openPanel) {
   if (btn) {
     btn.classList.toggle('active', !!playlistPanelPinned);
     btn.title = playlistPanelPinned ? '取消常开歌单' : '常开歌单';
+    btn.innerHTML = playlistPanelPinned
+      ? '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6"/><path d="M5 15l4 4"/><path d="M14 4l-2 5-4 4-3 2 4 4 2-3 4-4 5-2z"/><path d="M9 19l-4 4"/></svg>'
+      : '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6"/><path d="M5 15l4 4"/><path d="M14 4l-2 5-4 4-3 2 4 4 2-3 4-4 5-2z"/><path d="M9 19l-4 4"/></svg>';
   }
 }
 function setPlaylistPanelPinned(on, silent) {
@@ -19983,6 +20113,143 @@ setInterval(function(){
 }, 200);
 
 // ============================================================
+//  本地音视频播放
+// ============================================================
+function handleLocalMediaSelect(input) {
+  if (input.files && input.files.length > 0) {
+    playLocalMediaFile(input.files[0]);
+  }
+}
+function handleLocalMediaDrag(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  var box = document.getElementById('home-local-media-box');
+  if (box) box.classList.add('drag-over');
+}
+function handleLocalMediaDragLeave(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  var box = document.getElementById('home-local-media-box');
+  if (box) box.classList.remove('drag-over');
+}
+function handleLocalMediaDrop(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  var box = document.getElementById('home-local-media-box');
+  if (box) box.classList.remove('drag-over');
+  if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+    playLocalMediaFile(event.dataTransfer.files[0]);
+  }
+}
+function _getRealFilePath(file) {
+  if (window.desktopWindow && typeof window.desktopWindow.getFilePath === 'function') {
+    return window.desktopWindow.getFilePath(file) || file.path;
+  }
+  return file.path;
+}
+
+function exitVideoMode() {
+  document.body.classList.remove('video-playing-mode');
+  var video = document.getElementById('main-stage-video');
+  if (video) {
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+  }
+  if (window._originalAudio) {
+    window.audio = window._originalAudio;
+    audio = window._originalAudio;
+    window._originalAudio = null;
+    if (typeof updatePlaybackProgressUi === 'function') updatePlaybackProgressUi();
+    if (typeof syncPlaybackStateFromAudioEvent === 'function') syncPlaybackStateFromAudioEvent('pause');
+  }
+}
+
+// Map closeLocalVideo to exitVideoMode for backward compatibility if it's referenced elsewhere
+window.closeLocalVideo = exitVideoMode;
+
+function enterVideoMode(videoElement) {
+  document.body.classList.add('video-playing-mode');
+  
+  if (window.audio && !window.audio.paused && window.audio !== videoElement) {
+    window.audio.pause();
+  }
+  
+  if (window.audio !== videoElement) {
+    if (!window._originalAudio) {
+      window._originalAudio = window.audio;
+    }
+    window.audio = videoElement;
+    audio = videoElement;
+    
+    if (typeof bindPlaybackProgressEvents === 'function') {
+      bindPlaybackProgressEvents(videoElement);
+    }
+
+    if (!videoElement._hasVideoEventsBound) {
+      videoElement.addEventListener('click', function() {
+        if (typeof togglePlay === 'function') togglePlay();
+      });
+      videoElement.addEventListener('dblclick', function() {
+        if (typeof toggleFullscreen === 'function') toggleFullscreen();
+      });
+      videoElement._hasVideoEventsBound = true;
+    }
+  }
+
+  // Idle timer for video UI hiding
+  clearTimeout(window._videoIdleTimer);
+  document.body.classList.remove('video-idle');
+  if (!window._videoIdleBound) {
+    window.addEventListener('mousemove', function() {
+      if (document.body.classList.contains('video-playing-mode')) {
+        document.body.classList.remove('video-idle');
+        clearTimeout(window._videoIdleTimer);
+        window._videoIdleTimer = setTimeout(function() {
+          if (!videoElement.paused) document.body.classList.add('video-idle');
+        }, 3000);
+      }
+    });
+    window._videoIdleBound = true;
+  }
+}
+
+function playLocalMediaFile(file) {
+  if (!file) return;
+  
+  var name = file.name.toLowerCase();
+  var isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mkv|mov|avi|rmvb|flv|wmv|ts|m2ts|vob|3gp|swf)$/.test(name);
+  var isAudio = file.type.startsWith('audio/') || /\.(mp3|flac|wav|ogg|m4a|ape|alac|wma|aac)$/.test(name);
+  
+  if (isAudio && !isVideo) {
+    // 使用播放器主干播放音频
+    handleFiles([file]);
+    return;
+  }
+  
+  if (!isVideo && !isAudio) {
+    showToast('不支持的文件格式，请选择音视频文件');
+    return;
+  }
+  
+  var video = document.getElementById('main-stage-video');
+  if (video) {
+    var realPath = _getRealFilePath(file);
+    var nativeSupported = /\.(mp4|webm|ogg|mov)$/.test(name);
+    if (!nativeSupported && realPath) {
+      video.src = '/api/stream-local-media?path=' + encodeURIComponent(realPath);
+    } else {
+      video.src = URL.createObjectURL(file);
+    }
+    
+    enterVideoMode(video);
+    video.play().then(function() {
+      updatePlayPauseBtn();
+    }).catch(function(e){ console.error(e); });
+  }
+}
+
+// ============================================================
 //  文件拖放
 // ============================================================
 document.getElementById('file-input').addEventListener('change', function(e){ handleFiles(e.target.files); e.target.value = ''; });
@@ -19990,12 +20257,16 @@ function handleFiles(files) {
   var audioFile = null, imgFile = null;
   for (var i = 0; i < files.length; i++) {
     var f = files[i];
-    if (f.type.startsWith('audio/') || /\.(mp3|flac|wav|ogg|m4a)$/i.test(f.name)) audioFile = f;
-    else if (f.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(f.name)) imgFile = f;
+    var name = f.name.toLowerCase();
+    if (f.type.startsWith('audio/') || /\.(mp3|flac|wav|ogg|m4a|ape|alac|wma|aac)$/.test(name)) audioFile = f;
+    else if (f.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/.test(name)) imgFile = f;
   }
   if (audioFile) {
     finalizeListenSession(false);
-    var url = URL.createObjectURL(audioFile);
+    var name = audioFile.name.toLowerCase();
+    var nativeSupported = /\.(mp3|flac|wav|ogg|m4a)$/.test(name);
+    var realAudioPath = _getRealFilePath(audioFile);
+    var url = (!nativeSupported && realAudioPath) ? ('/api/stream-local-media?path=' + encodeURIComponent(realAudioPath)) : URL.createObjectURL(audioFile);
     var localTitle = audioFile.name.replace(/\.[^.]+$/, '');
     trackSwitchToken++;
     var token = trackSwitchToken;
@@ -26543,6 +26814,15 @@ if (collectNameInput) {
     if (e.key === 'Enter') {
       e.preventDefault();
       createPlaylistFromCollect();
+    }
+  });
+}
+var weatherCityInput = document.getElementById('weather-city-input');
+if (weatherCityInput) {
+  weatherCityInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submitWeatherCity();
     }
   });
 }
